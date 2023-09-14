@@ -1,0 +1,26 @@
+#workflow to add new op to run
+
+#add op to vqeops.py
+#generate H and reference data across range of bond lengths (which are later referenced by an integer index)
+vqe-generate-H-and-opdata.py
+#generate measurement basis gates for each op and bond length, only keep unique sets of bases (i.e. some bond lengths have same set), allbasissets(-greedy).json stores which sets cover which bond lengths
+vqe-basisgenerate-bonds.py
+#reduce each set down using greedy algorithm
+basis-sets-parity-greedy-bonds/set-cover-reduce.py
+#check all gates covered in final greedy set
+basis-sets-parity-greedy-bonds/check-cover.py
+
+#can copy basis sets (both original and greedy .dat files) to serial-testing/ to test serial vqe and exact diagonalization
+
+#run vqe using vqe-parallel
+#copy template-op into new directory
+#descend, modify submit.sh to desired op to run
+#modify submitwrapper.sh to run desired ansatzes and bond length indices
+#./submitwrapper.sh
+#aggregate energies across all template-op directories with data using energies.py in parent directory
+#./energies.py template-op
+
+#for bond lengths that didn't finish, run
+#./params.py template-op
+#on op directory to generate final parameter summary files for all bond lengths before running ./submitwrapper-redo.sh on unconverged bond length indices. vqe-wrapper.py looks for an existing parameters files
+
